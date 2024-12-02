@@ -1,37 +1,50 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-const CameraAccess: React.FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null); // Ссылка на элемент video
+// Компонент для отображения видео с камеры
+const App: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    // Запрашиваем доступ к камере
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        // Если доступ получен, подключаем поток к видео элементу
+    const getCamera = async () => {
+      try {
+        // Запрашиваем доступ к камере
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true, // запросить только видеопоток
+        });
+
+        // Если видео элемент существует, устанавливаем поток
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
-      })
-      .catch((error) => {
-        console.error('Ошибка доступа к камере:', error);
-      });
-    
-    // Останавливаем поток при размонтировании компонента
+      } catch (error) {
+        console.error("Error accessing camera", error);
+        setHasError(true);
+      }
+    };
+
+    getCamera();
+
+    // Очищаем поток, когда компонент размонтируется
     return () => {
-      if (videoRef.current?.srcObject) {
+      if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
         const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop()); // Останавливаем все треки
+        tracks.forEach((track) => track.stop()); // остановка потоков
       }
     };
   }, []);
 
   return (
     <div>
-      <h1>Доступ к камере</h1>
-      <video ref={videoRef} autoPlay></video> {/* Видео с потоком камеры */}
+      <h1>Видео с камеры</h1>
+      {hasError ? (
+        <p>Ошибка доступа к камере.</p>
+      ) : (
+        <video ref={videoRef} autoPlay playsInline width="100%" height="auto" />
+      )}
     </div>
   );
 };
 
-export default CameraAccess;
+export default App;
